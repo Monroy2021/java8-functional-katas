@@ -3,6 +3,7 @@ package katas;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import util.DataUtil;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,7 +71,19 @@ public class Kata11 {
         List<Map> boxArts = DataUtil.getBoxArts();
         List<Map> bookmarkList = DataUtil.getBookmarkList();
 
-        return ImmutableList.of(ImmutableMap.of("name", "someName", "videos", ImmutableList.of(
-                ImmutableMap.of("id", 5, "title", "The Chamber", "time", 123, "boxart", "someUrl") )));
+        return lists.stream()
+                .map(list -> ImmutableMap.of(
+                        "name", list.get("name"),
+                        "videos", videos.stream()
+                                .map(video -> ImmutableMap.of(
+                                        "id", video.get("id"),
+                                        "title", video.get("title"),
+                                        "time", bookmarkList.stream()
+                                                .filter(bookMark -> bookMark.get("videoId").equals(video.get("id"))).findAny().get().get("time"),
+                                        "boxart", boxArts.stream()
+                                                .filter(boxArt -> boxArt.get("videoId").equals(video.get("id")))))
+                                //.reduce((a,b) -> a.get("width") < b.get("width") ? a : b).get().getUrl()))
+                                .collect(Collectors.toList())))
+                .collect(Collectors.toList());
     }
 }

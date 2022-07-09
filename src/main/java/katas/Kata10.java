@@ -48,17 +48,20 @@ import java.util.stream.Collectors;
     Output: the given datastructure
 */
 public class Kata10 {
-
-    private static final String KEY_TITLE = "title";
-    private static final String KEY_ID = "id";
-    private static final String KEY_NAME = "name";
-
+    
     public static List<Map> execute() {
         List<Map> lists = DataUtil.getLists();
         List<Map> videos = DataUtil.getVideos();
 
-        return (lists.stream().map((list) -> ImmutableMap.of("name",list.get("name"),"videos",videos.stream()
-                .filter((video) -> (video.get("listId").equals(list.get("id"))))
-                .collect(Collectors.toList()))).collect(Collectors.toList()));
+        return lists.stream()
+                .map(list -> ImmutableMap.of(
+                        "name", list.get("name"),
+                        "videos", videos.stream()
+                                .filter(video -> video.get("listId").equals(list.get("id")))
+                                .map(video -> ImmutableMap.of(
+                                        "id", video.get("id"),
+                                        "title", video.get("title")))
+                                .collect(Collectors.toList())))
+                .collect(Collectors.toList());
     }
 }
